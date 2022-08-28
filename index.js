@@ -1,6 +1,9 @@
 const express = require('express');
 const app = express();
 
+// import DB connection
+const connectDB = require('./config/db')
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
@@ -10,16 +13,9 @@ const auth = require('./controllers/Authentication')
 // initiate controllers
 app.use('/api/auth/',auth)
 
-app.get('/', async (req, res) => {
-    try {
-        res.status(200).json({
-            success: true,
-            data: "Hello"
-        })
-    } catch (e) {
-        console.log(e)
-    }
-})
+// connect to DB
+connectDB();
+
 
 const PORT = 5000 || process.env.PORT;
 
