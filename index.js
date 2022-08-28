@@ -1,6 +1,19 @@
 const express = require('express');
-
 const app = express();
+
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+
+app.get('/', async (req, res) => {
+    try {
+        res.status(200).json({
+            success: true,
+            data: "Hello"
+        })
+    } catch (e) {
+        console.log(e)
+    }
+})
 
 const PORT = 5000 || process.env.PORT;
 
