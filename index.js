@@ -4,6 +4,12 @@ const app = express();
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
+// import route files
+const auth = require('./controllers/Authentication')
+
+// initiate controllers
+app.use('/api/auth/',auth)
+
 app.get('/', async (req, res) => {
     try {
         res.status(200).json({
