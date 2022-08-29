@@ -1,20 +1,24 @@
 const express = require('express');
-const app = express();
-
+const dotenv = require('dotenv')
 // import DB connection
 const connectDB = require('./config/db')
+
+// import route files
+const auth = require('./routes/Authentication')
+
+const app = express();
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-// import route files
-const auth = require('./controllers/Authentication')
-
-// initiate controllers
-app.use('/api/auth/',auth)
+// load env files
+dotenv.config({ path: './config/config.env' })
 
 // connect to DB
 connectDB();
+
+// initiate controllers
+app.use('/api/auth/',auth)
 
 
 const PORT = 5000 || process.env.PORT;
