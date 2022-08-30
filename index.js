@@ -1,5 +1,15 @@
 const express = require('express');
 const dotenv = require('dotenv')
+const colors = require('colors')
+const ErrorHandler = require('./middleware/Error')
+const cors = require('cors')
+
+const corsOptions = {
+    origin: 'http://locatlhost:5000',
+    credentials: true, //access-control-allow-credentials:true
+    optionSuccessStatus: 200,
+}
+
 // import DB connection
 const connectDB = require('./config/db')
 
@@ -7,6 +17,8 @@ const connectDB = require('./config/db')
 const auth = require('./routes/Authentication')
 
 const app = express();
+app.use(cors())
+app.use(ErrorHandler)
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -18,7 +30,7 @@ dotenv.config({ path: './config/config.env' })
 connectDB();
 
 // initiate controllers
-app.use('/api/auth/',auth)
+app.use('/api/auth/', auth)
 
 
 const PORT = 5000 || process.env.PORT;
@@ -26,3 +38,11 @@ const PORT = 5000 || process.env.PORT;
 app.listen(PORT, () => {
     console.log(`Server is running on ${process.env.NODE_ENV} mode on port ${process.env.PORT}`)
 })
+
+// handle un-handled promise re-jections
+process.on("unhandledRejection", (error, promise) => {
+    console.log(`Error : ${error.message}`.red.bold);
+
+    // close server and exit process
+    server.close(() => process.exit(1));
+});
