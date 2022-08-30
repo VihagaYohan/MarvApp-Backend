@@ -35,6 +35,12 @@ const userSchema = new mongoose.Schema({
         maxlength: [10, "Phone number shoud not be longer than 10 characters"],
         unieq: true,
     },
+    type:{
+        type:String,
+        enum:['user','service-provider','admin'],
+        trim:true,
+        default:'user'
+    },
     resetPasswordToken: {
         type: String,
     },
