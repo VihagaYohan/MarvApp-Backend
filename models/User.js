@@ -41,6 +41,14 @@ const userSchema = new mongoose.Schema({
         trim:true,
         default:'user'
     },
+    services:{
+        type:[]
+    },
+    decription:{
+        type:String,
+        trim:true,
+        maxLength:[250,'Description should not be longer than 250 characters']
+    },
     resetPasswordToken: {
         type: String,
     },

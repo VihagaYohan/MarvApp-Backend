@@ -16,6 +16,7 @@ const connectDB = require('./config/db')
 // import route files
 const auth = require('./routes/Authentication')
 const serviceCategory = require('./routes/Services')
+const order = require('./routes/Orders')
 
 const app = express();
 app.use(cors())
@@ -33,6 +34,7 @@ connectDB();
 // initiate controllers
 app.use('/api/auth/', auth)
 app.use('/api/services/',serviceCategory)
+app.use('/api/orders/',order)
 
 
 const PORT = 5000 || process.env.PORT;
