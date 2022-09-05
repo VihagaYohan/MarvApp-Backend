@@ -33,7 +33,7 @@ const orderSchema = new mongoose.Schema({
         required:[true,'Please add start time']
     },
     totalFee:{
-        type:Decimal,
+        type:mongoose.Types.Decimal128,
         required:[true,'Please add total service charge']
     },
     isDelete:{
