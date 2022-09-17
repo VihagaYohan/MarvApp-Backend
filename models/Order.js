@@ -1,62 +1,88 @@
 const mongoose = require('mongoose');
 const Joi = require('joi');
-Joi.ObjectId = require('joi-objectid')(Joi)
+Joi.objectId = require("joi-objectid")(Joi);
 
 const orderSchema = new mongoose.Schema({
     clientId: {
         type: mongoose.Types.ObjectId,
-        trim: true,
         required: [true, 'Please add name']
     },
     serviceProviderId: {
-        type:mongoose.Types.ObjectId,
+        type: mongoose.Types.ObjectId
+
+    },
+    serviceType: {
+        type: mongoose.Types.ObjectId,
+        required: [true, 'Please add service type']
+    },
+    orderStatus: {
+        type: String,
+        enum: ['pending', 'completed', 'in-progress', 'assigned', 'cancelled'],
         trim: true,
-        required: [true, 'Please add name']
+        default: "pending"
     },
-    serviceType:{
-        type:mongoose.Types.ObjectId,
-        trim:true,
-        required:[true,'Please add service type']
+    extra_Service: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref:"ExtraServices"
     },
-    orderStatus:{
-        type:String,
-        enum:['pending','completed','in-progress','assigned','cancelled'],
-        trim:true,
-        default:"pending"
+    workingHours: {
+        type: Number,
+        required: [true, 'Please add total working hours']
     },
-    date:{
-        type:Date,
-        required:[true,'Please add date']
+    date: {
+        type: Date,
+        required: [true, 'Please add date']
     },
-    startTime:{
-        type:String,
-        required:[true,'Please add start time']
+    howOften: {
+        type: String,
+        enum: ['One Time', "Weekly", 'Bi-Weekly', 'Monthly'],
+        default: "One Time"
     },
-    totalFee:{
-        type:Decimal,
-        required:[true,'Please add total service charge']
+    startTime: {
+        type: String,
+        enum: ['09.00 AM', "10.00 AM", '11.00 AM', '12.00 PM'],
+        default: "09.00 AM",
+        required: [true, 'Please add start time']
     },
-    isDelete:{
-        type:Boolean,
-        default:false
+    totalFee: {
+        type: mongoose.Types.Decimal128,
+        required: [true, 'Please add total service charge']
+    },
+    isDelete: {
+        type: Boolean,
+        default: false
     }
-},{timestamps:true})
+}, { timestamps: true })
 
 // create order model
-const Order = mongoose.model('Order',orderSchema);
+const Order = mongoose.model('Order', orderSchema);
 
 // order input validation
-const validationOrder = order =>{
+const validationOrder = order => {
+    console.log(order)
     const schema = Joi.object({
-        clientId:Joi.ObjectId().required(),
-        serviceProviderId:Joi.ObjectId(),
-        serviceType:Joi.ObjectId().required(),
-        orderStatus:Joi.string(),
-        date:Joi.date().required(),
-        startTime:Joi.string().required(),
-        totalFee:Joi.Decimal().required().min(10)
+        /*  clientId: Joi.objectId().required(),
+         //serviceProviderId: Joi.objectId(),
+         serviceType: Joi.objectId().required(),
+         orderStatus: Joi.string().required(),
+         workingHours: Joi.number().required(),
+         howOften: Joi.string().required(),
+         date: Joi.date().required(),
+         startTime: Joi.string().required(),
+         totalFee: Joi.number().required().min(10) */
+
+        clientId: Joi.objectId().required(),
+        serviceProviderId:Joi.objectId(),
+        serviceType: Joi.objectId().required(),
+        orderStatus: Joi.string().required(),
+        extra_Service:Joi.array(),
+        workingHours: Joi.number().required(),
+        date: Joi.date().required(),
+        howOften: Joi.string().required(),
+        startTime: Joi.string().required(),
+        totalFee: Joi.number().required().min(10) 
     })
-    return schema.validate(schema)
+    return schema.validate(order)
 }
 
 module.exports = {

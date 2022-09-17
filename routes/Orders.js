@@ -11,7 +11,7 @@ const router = express.Router();
 router.route('/').get(Auth,getAllOrders).post(Auth,createOrder)
 
 router.route('/:id').get(Auth,getOrderById)
-.updateOrder(Auth,updateOrder)
-.deleteOrder(Auth,deleteOrder)
+.put(Auth,updateOrder)
+.put(Auth,deleteOrder)
 
 module.exports = router;

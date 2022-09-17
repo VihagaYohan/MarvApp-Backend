@@ -3,6 +3,7 @@ const { User, validationUser, validationLogin, validationResetPassword } = requi
 const jwt = require('jsonwebtoken')
 const Joi = require('joi')
 const crypto = require('crypto')
+const ErrorResponse= require('../utility/ErrorResponse')
 
 
 // @desc    register new user
@@ -60,8 +61,8 @@ exports.loginUser = async (req, res, next) => {
         const { email, password } = req.body;
 
         // validate email and password
-        const { error } = validationLogin(req.body);
-        if (error) return next(new ErrorResponse(error.details[0].message, 400));
+        //const { error } = validationLogin(req.body);
+        //if (error) return next(new ErrorResponse(error.details[0].message, 400));
 
         // check for user in the database
         const user = await User.findOne({ email }).select("+password");
