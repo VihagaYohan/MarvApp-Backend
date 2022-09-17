@@ -25,9 +25,9 @@ exports.getAllOrders = async (req, res) => {
 // @desc    get all order by Id
 // @route   GET/api/orders/:id
 // @access  PRIVATE
-exports.getOrderById = async (req, res) => {
+exports.getOrderById = async (req, res, next) => {
     try {
-        let order = await Order.findById(req.params.id);
+        let order = await Order.findById(req.params.id).populate('extra_Service');
         if (!order) return next(new ErrorResponse(error.details[0].message))
 
         res.status(200).json({
@@ -42,18 +42,26 @@ exports.getOrderById = async (req, res) => {
 // @desc    create order
 // @route   POST/api/orders/
 // @access  PRIVATE
-exports.createOrder = async (req, res) => {
+exports.createOrder = async (req, res, next) => {
     try {
         // input data validation
         const { error } = validationOrder(req.body);
-        if (error) return next(new ErrorResponse(error.details[0].message), 400)
+        console.log(error)
+        if (error) return next(new ErrorResponse(error.details[0].message), 400)/* */
 
-        const { clientId, serviceType, date, startTime,
+
+
+        const { clientId, serviceType, workingHours, orderStatus, extraService, howOften, date, startTime,
             totalFee } = req.body
+
         let order = await Order({
-            clientId: clientId,
-            serviceType: serviceType,
+            clientId: mongoose.Types.ObjectId(clientId),
+            serviceType: mongoose.Types.ObjectId(serviceType),
+            workingHours: workingHours,
+            orderStatus: orderStatus,
+            extraService: extraService,
             date: date,
+            howOften: howOften,
             startTime: startTime,
             totalFee: totalFee
         })
@@ -71,20 +79,24 @@ exports.createOrder = async (req, res) => {
 // @desc    update order
 // @route   PUT/api/orders/:id
 // @access  PRIVATE
-exports.updateOrder = async (req, res) => {
+exports.updateOrder = async (req, res, next) => {
     try {
-        // check for input data validation
-        const { error } = validationOrder(req.body);
-        if (error) return next(new ErrorResponse(error.details[0].message, 400));
-
         let order = await Order.findById(req.params.id);
         if (!order) return next(new ErrorResponse('Unable to locate order for the given ID', 404))
+
+        // check for input data validation
+        const { error } = validationOrder(req.body);
+        console.log(error)
+        if (error) return next(new ErrorResponse(error.details[0].message, 400));
 
         let { clientId,
             serviceProviderId,
             serviceType,
             orderStatus,
+            extra_Service,
+            workingHours,
             date,
+            howOften,
             startTime,
             totalFee } = req.body
 
@@ -92,7 +104,10 @@ exports.updateOrder = async (req, res) => {
         order.serviceProviderId = serviceProviderId;
         order.serviceType = serviceType;
         order.orderStatus = orderStatus;
+        order.extra_Service = extra_Service;
+        order.workingHours = workingHours
         order.date = date;
+        order.howOften = howOften
         order.startTime = startTime;
         order.totalFee = totalFee;
 
@@ -113,7 +128,7 @@ exports.updateOrder = async (req, res) => {
 // @desc    delete order
 // @route   DELETE/api/orders/:id
 // @access  PRIVATE
-exports.deleteOrder = async (req, res) => {
+exports.deleteOrder = async (req, res, next) => {
     try {
         let order = await Order.findById(req.params.id);
         if (!order) return next(new ErrorResponse('Unable to locate order for given ID', 404))
